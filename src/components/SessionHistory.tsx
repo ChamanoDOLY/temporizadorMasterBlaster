@@ -21,18 +21,23 @@ const SessionHistory = ({ entries }: SessionHistoryProps) => {
   };
 
   const formatTimestamp = (date: Date) => {
-    return date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    return new Date(date).toLocaleString('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
   };
 
   return (
-    <Card className="w-full max-w-md p-6">
+    <Card className="w-full max-w-4xl p-6">
       <h2 className="text-xl font-bold mb-4">Histórico da Sessão</h2>
       <div className="space-y-2">
         {entries.map((entry, index) => (
           <div
             key={index}
             className={`p-3 rounded-lg ${
-              entry.type === 'work' ? 'bg-work/10' : 'bg-leisure/10'
+              entry.type === 'work' ? 'bg-blue-100' : 'bg-green-100'
             }`}
           >
             <div className="flex justify-between items-center">
