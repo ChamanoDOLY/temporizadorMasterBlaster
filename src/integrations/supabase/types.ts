@@ -288,34 +288,52 @@ export type Database = {
           },
         ]
       }
+      simple_profiles: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
       time_records: {
         Row: {
           created_at: string
           duration: number
           id: string
+          profile_id: string | null
           type: string
-          user_id: string
         }
         Insert: {
           created_at?: string
           duration: number
           id?: string
+          profile_id?: string | null
           type: string
-          user_id: string
         }
         Update: {
           created_at?: string
           duration?: number
           id?: string
+          profile_id?: string | null
           type?: string
-          user_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "time_records_user_id_fkey"
-            columns: ["user_id"]
+            foreignKeyName: "time_records_profile_id_fkey"
+            columns: ["profile_id"]
             isOneToOne: false
-            referencedRelation: "profiles"
+            referencedRelation: "simple_profiles"
             referencedColumns: ["id"]
           },
         ]
