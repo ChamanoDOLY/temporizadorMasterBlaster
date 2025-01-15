@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Play, Pause, Stop } from 'lucide-react';
+import { Play, Pause, Square } from 'lucide-react';
 
 interface TimerProps {
   title: string;
@@ -70,7 +70,7 @@ const Timer = ({
           className="border-2"
           disabled={disabled || (!isRunning && time === 0)}
         >
-          <Stop className="mr-2 h-4 w-4" />
+          <Square className="mr-2 h-4 w-4" />
           Parar
         </Button>
       </div>
