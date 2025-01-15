@@ -34,47 +34,48 @@ const Timer = ({
       .padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
   };
 
-  const bgColor = variant === 'work' ? 'bg-work' : 'bg-leisure';
-  const bgColorLight = variant === 'work' ? 'bg-work-light' : 'bg-leisure-light';
+  const buttonClass = variant === 'work' ? 'bg-green-500 hover:bg-green-600' : 'bg-blue-500 hover:bg-blue-600';
 
   return (
-    <Card className={`w-full max-w-md p-6 ${disabled ? 'opacity-70' : ''}`}>
-      <h2 className="text-2xl font-bold mb-4">{title}</h2>
-      <div className={`text-4xl font-mono font-bold mb-6 ${bgColor} bg-opacity-10 rounded-lg p-4`}>
+    <div className="space-y-4">
+      <h2 className="text-xl font-semibold text-center">{title}</h2>
+      <div className="text-4xl font-mono font-bold text-center">
         {formatTime(time)}
       </div>
-      <div className="flex justify-center gap-4">
+      <div className="flex justify-center">
         {!isRunning ? (
           <Button
             onClick={onStart}
-            className={`${bgColor} hover:${bgColorLight}`}
+            className={`w-full ${buttonClass}`}
             disabled={disabled}
           >
             <Play className="mr-2 h-4 w-4" />
-            Iniciar
+            {variant === 'work' ? 'Start Work' : 'Start Break'}
           </Button>
         ) : (
-          <Button
-            onClick={onPause}
-            variant="outline"
-            className="border-2"
-            disabled={disabled}
-          >
-            <Pause className="mr-2 h-4 w-4" />
-            Pausar
-          </Button>
+          <div className="flex gap-2 w-full">
+            <Button
+              onClick={onPause}
+              variant="outline"
+              className="flex-1"
+              disabled={disabled}
+            >
+              <Pause className="mr-2 h-4 w-4" />
+              Pause
+            </Button>
+            <Button
+              onClick={onStop}
+              variant="outline"
+              className="flex-1"
+              disabled={disabled}
+            >
+              <Square className="mr-2 h-4 w-4" />
+              Stop
+            </Button>
+          </div>
         )}
-        <Button
-          onClick={onStop}
-          variant="outline"
-          className="border-2"
-          disabled={disabled || (!isRunning && time === 0)}
-        >
-          <Square className="mr-2 h-4 w-4" />
-          Parar
-        </Button>
       </div>
-    </Card>
+    </div>
   );
 };
 
