@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
+import { loadTimerData, saveTimerData, clearTimerData } from '@/lib/utils';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -14,10 +15,21 @@ import GamificationSection from '@/components/GamificationSection';
 
 const Index = () => {
   const navigate = useNavigate();
+  // Carrega dados salvos ao inicializar
   const [workTime, setWorkTime] = useState(0);
   const [leisureTime, setLeisureTime] = useState(0);
   const [isWorkRunning, setIsWorkRunning] = useState(false);
   const [isLeisureRunning, setIsLeisureRunning] = useState(false);
+
+  useEffect(() => {
+    const savedData = loadTimerData();
+    if (savedData) {
+      setWorkTime(savedData.workTime);
+      setLeisureTime(savedData.leisureTime);
+      setIsWorkRunning(savedData.isWorkRunning);
+      setIsLeisureRunning(savedData.isLeisureRunning);
+    }
+  }, []);
   const [selectedProfile, setSelectedProfile] = useState<string | null>(null);
 
   useEffect(() => {
@@ -42,6 +54,16 @@ const Index = () => {
 
     return () => clearInterval(interval);
   }, [isWorkRunning, isLeisureRunning]);
+
+  // Salva dados sempre que houver mudanças
+  useEffect(() => {
+    saveTimerData({
+      workTime,
+      leisureTime,
+      isWorkRunning,
+      isLeisureRunning
+    });
+  }, [workTime, leisureTime, isWorkRunning, isLeisureRunning]);
 
   const saveTimeRecord = async (type: 'work' | 'leisure', duration: number) => {
     if (!selectedProfile) {
@@ -114,6 +136,7 @@ const Index = () => {
 
   const handleLogout = () => {
     setSelectedProfile(null);
+    clearTimerData();
     navigate('/');
   };
 
