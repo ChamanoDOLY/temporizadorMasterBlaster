@@ -35,22 +35,22 @@ const Timer = ({
       .padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
   };
 
-  const progressValue = (time % 3600) / 36; // Progress for each hour cycle
+  const progressValue = (time % 3600) / 36;
 
   return (
-    <Card className={`p-6 space-y-4 ${
+    <Card className={`p-8 space-y-6 ${
       variant === 'work' 
         ? 'bg-gradient-to-r from-blue-50 to-blue-100' 
         : 'bg-gradient-to-r from-green-50 to-green-100'
     }`}>
-      <div className="flex items-center justify-center gap-2 mb-2">
-        <TimerIcon className={`h-5 w-5 ${
+      <div className="flex items-center justify-center gap-2 mb-4">
+        <TimerIcon className={`h-6 w-6 ${
           variant === 'work' ? 'text-blue-500' : 'text-green-500'
         }`} />
-        <h2 className="text-xl font-semibold">{title}</h2>
+        <h2 className="text-2xl font-semibold">{title}</h2>
       </div>
 
-      <div className="text-4xl font-mono font-bold text-center">
+      <div className="text-6xl font-mono font-bold text-center tracking-wider">
         {formatTime(time)}
       </div>
 
@@ -63,47 +63,47 @@ const Timer = ({
         }`}
       />
 
-      <div className="flex justify-center">
+      <div className="flex justify-center pt-2">
         {!isRunning ? (
           <Button
             onClick={onStart}
-            className={`w-full transition-all ${
+            className={`w-full transition-all text-lg py-6 ${
               variant === 'work'
                 ? 'bg-blue-500 hover:bg-blue-600'
                 : 'bg-green-500 hover:bg-green-600'
             } ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
             disabled={disabled}
           >
-            <Play className="mr-2 h-4 w-4" />
-            {variant === 'work' ? 'Start Work' : 'Start Break'}
+            <Play className="mr-2 h-5 w-5" />
+            {variant === 'work' ? 'Iniciar Trabalho' : 'Iniciar Pausa'}
           </Button>
         ) : (
           <div className="flex gap-2 w-full">
             <Button
               onClick={onPause}
               variant="outline"
-              className={`flex-1 border-2 ${
+              className={`flex-1 border-2 py-6 text-lg ${
                 variant === 'work' 
                   ? 'border-blue-200 hover:bg-blue-50' 
                   : 'border-green-200 hover:bg-green-50'
               }`}
               disabled={disabled}
             >
-              <Pause className="mr-2 h-4 w-4" />
-              Pause
+              <Pause className="mr-2 h-5 w-5" />
+              Pausar
             </Button>
             <Button
               onClick={onStop}
               variant="outline"
-              className={`flex-1 border-2 ${
+              className={`flex-1 border-2 py-6 text-lg ${
                 variant === 'work' 
                   ? 'border-blue-200 hover:bg-blue-50' 
                   : 'border-green-200 hover:bg-green-50'
               }`}
               disabled={disabled}
             >
-              <Square className="mr-2 h-4 w-4" />
-              Stop
+              <Square className="mr-2 h-5 w-5" />
+              Parar
             </Button>
           </div>
         )}
