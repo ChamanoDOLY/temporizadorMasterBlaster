@@ -1,5 +1,6 @@
 import React from 'react';
 import { Card } from '@/components/ui/card';
+import { Clock, Coffee } from 'lucide-react';
 
 interface HistoryEntry {
   type: 'work' | 'leisure';
@@ -30,31 +31,43 @@ const SessionHistory = ({ entries }: SessionHistoryProps) => {
   };
 
   return (
-    <Card className="w-full max-w-4xl p-6">
+    <Card className="w-full p-6 bg-white">
       <h2 className="text-xl font-bold mb-4">Histórico da Sessão</h2>
-      <div className="space-y-2">
+      <div className="space-y-3">
         {entries.map((entry, index) => (
           <div
             key={index}
-            className={`p-3 rounded-lg ${
-              entry.type === 'work' ? 'bg-blue-100' : 'bg-green-100'
+            className={`p-4 rounded-lg transition-all hover:scale-[1.01] ${
+              entry.type === 'work' 
+                ? 'bg-gradient-to-r from-blue-50 to-blue-100' 
+                : 'bg-gradient-to-r from-green-50 to-green-100'
             }`}
           >
             <div className="flex justify-between items-center">
-              <span className="font-medium">
-                {entry.type === 'work' ? 'Trabalho' : 'Lazer'}
-              </span>
+              <div className="flex items-center gap-2">
+                {entry.type === 'work' ? (
+                  <Clock className="h-4 w-4 text-blue-500" />
+                ) : (
+                  <Coffee className="h-4 w-4 text-green-500" />
+                )}
+                <span className="font-medium">
+                  {entry.type === 'work' ? 'Trabalho' : 'Lazer'}
+                </span>
+              </div>
               <span className="text-sm text-gray-600">
                 {formatTimestamp(entry.timestamp)}
               </span>
             </div>
-            <div className="text-sm text-gray-600">
+            <div className="text-sm text-gray-600 mt-1">
               Duração: {formatTime(entry.duration)}
             </div>
           </div>
         ))}
         {entries.length === 0 && (
-          <p className="text-center text-gray-500">Nenhum registro ainda</p>
+          <div className="text-center py-8 text-gray-500">
+            <Clock className="h-12 w-12 mx-auto mb-2 opacity-50" />
+            <p>Nenhum registro ainda</p>
+          </div>
         )}
       </div>
     </Card>

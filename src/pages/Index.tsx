@@ -8,7 +8,9 @@ import { useQuery } from '@tanstack/react-query';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from '@/components/ui/button';
-import { LogOut } from 'lucide-react';
+import { Card } from '@/components/ui/card';
+import { Progress } from '@/components/ui/progress';
+import { LogOut, Clock, History } from 'lucide-react';
 
 interface Profile {
   id: string;
@@ -29,7 +31,7 @@ const Index = () => {
   const [isLeisureRunning, setIsLeisureRunning] = useState(false);
   const [selectedProfile, setSelectedProfile] = useState<string | null>(null);
 
-  // Buscar perfis
+  // Fetch profiles
   const { data: profiles } = useQuery({
     queryKey: ['profiles'],
     queryFn: async () => {
@@ -42,7 +44,7 @@ const Index = () => {
     }
   });
 
-  // Buscar histórico
+  // Fetch history
   const { data: timeRecords, refetch: refetchTimeRecords } = useQuery({
     queryKey: ['timeRecords', selectedProfile],
     queryFn: async () => {
@@ -163,74 +165,133 @@ const Index = () => {
   };
 
   const handleLogout = () => {
-    navigate('/auth');
+    setSelectedProfile(null);
+    navigate('/');
   };
 
+  // Calculate total work and leisure time
+  const totalWorkTime = timeRecords?.reduce((acc, record) => 
+    record.type === 'work' ? acc + record.duration : acc, 0) || 0;
+  
+  const totalLeisureTime = timeRecords?.reduce((acc, record) => 
+    record.type === 'leisure' ? acc + record.duration : acc, 0) || 0;
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8 px-4">
-      <div className="max-w-md mx-auto space-y-8">
-        <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold">Work & Leisure Timer</h1>
-          <div className="flex items-center gap-4">
-            <Select value={selectedProfile || ''} onValueChange={setSelectedProfile}>
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Selecionar perfil" />
-              </SelectTrigger>
-              <SelectContent>
-                {profiles?.map((profile) => (
-                  <SelectItem key={profile.id} value={profile.id}>
-                    {profile.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Button variant="ghost" size="icon" onClick={handleLogout}>
-              <LogOut className="h-5 w-5" />
-            </Button>
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-purple-100 py-8 px-4 animate-fade-in">
+      <div className="max-w-4xl mx-auto space-y-8">
+        <Card className="p-6 shadow-lg">
+          <div className="flex justify-between items-center mb-6">
+            <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-blue-600">
+              Work & Leisure Balance
+            </h1>
+            <div className="flex items-center gap-4">
+              <Select 
+                value={selectedProfile || ''} 
+                onValueChange={setSelectedProfile}
+              >
+                <SelectTrigger className="w-[220px] bg-white">
+                  <Clock className="mr-2 h-4 w-4 text-purple-500" />
+                  <SelectValue placeholder="Selecione seu perfil" />
+                </SelectTrigger>
+                <SelectContent>
+                  {profiles?.map((profile) => (
+                    <SelectItem 
+                      key={profile.id} 
+                      value={profile.id}
+                      className="hover:bg-purple-50"
+                    >
+                      {profile.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Button 
+                variant="outline" 
+                size="icon" 
+                onClick={handleLogout}
+                className="hover:bg-red-50 hover:text-red-500 transition-colors"
+              >
+                <LogOut className="h-5 w-5" />
+              </Button>
+            </div>
           </div>
-        </div>
 
-        <Tabs defaultValue="timer" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="timer">Timer</TabsTrigger>
-            <TabsTrigger value="history">Histórico</TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="timer" className="space-y-8">
-            <Timer
-              title="Work Timer"
-              time={workTime}
-              isRunning={isWorkRunning}
-              variant="work"
-              onStart={handleWorkStart}
-              onPause={handleWorkPause}
-              onStop={handleWorkStop}
-              disabled={isLeisureRunning}
-            />
+          {selectedProfile ? (
+            <Tabs defaultValue="timer" className="w-full">
+              <TabsList className="grid w-full grid-cols-2 mb-6">
+                <TabsTrigger value="timer" className="data-[state=active]:bg-purple-100">
+                  <Clock className="mr-2 h-4 w-4" />
+                  Timer
+                </TabsTrigger>
+                <TabsTrigger value="history" className="data-[state=active]:bg-purple-100">
+                  <History className="mr-2 h-4 w-4" />
+                  Histórico
+                </TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="timer" className="space-y-8">
+                <div className="grid md:grid-cols-2 gap-8">
+                  <Timer
+                    title="Work Timer"
+                    time={workTime}
+                    isRunning={isWorkRunning}
+                    variant="work"
+                    onStart={handleWorkStart}
+                    onPause={handleWorkPause}
+                    onStop={handleWorkStop}
+                    disabled={isLeisureRunning}
+                  />
 
-            <div className="bg-blue-50 p-4 rounded-lg text-center">
-              <h3 className="text-lg font-semibold mb-2">Leisure Balance</h3>
-              <p className="text-2xl font-bold text-blue-600">
-                {Math.floor(leisureTime / 3600)}h {Math.floor((leisureTime % 3600) / 60)}m
+                  <Timer
+                    title="Leisure Timer"
+                    time={leisureTime}
+                    isRunning={isLeisureRunning}
+                    variant="leisure"
+                    onStart={handleLeisureStart}
+                    onPause={handleLeisurePause}
+                    onStop={handleLeisureStop}
+                    disabled={isWorkRunning || leisureTime === 0}
+                  />
+                </div>
+
+                <Card className="p-6 bg-gradient-to-r from-blue-50 to-purple-50">
+                  <h3 className="text-lg font-semibold mb-4">Leisure Balance</h3>
+                  <Progress 
+                    value={(leisureTime / (workTime || 1)) * 100} 
+                    className="h-3 mb-2"
+                  />
+                  <p className="text-2xl font-bold text-purple-600">
+                    {Math.floor(leisureTime / 3600)}h {Math.floor((leisureTime % 3600) / 60)}m
+                  </p>
+                </Card>
+              </TabsContent>
+              
+              <TabsContent value="history">
+                <div className="mb-6 grid grid-cols-2 gap-4">
+                  <Card className="p-4 bg-gradient-to-r from-blue-50 to-blue-100">
+                    <h3 className="text-sm font-medium mb-2">Total Work Time</h3>
+                    <p className="text-2xl font-bold text-blue-600">
+                      {Math.floor(totalWorkTime / 3600)}h {Math.floor((totalWorkTime % 3600) / 60)}m
+                    </p>
+                  </Card>
+                  <Card className="p-4 bg-gradient-to-r from-green-50 to-green-100">
+                    <h3 className="text-sm font-medium mb-2">Total Leisure Time</h3>
+                    <p className="text-2xl font-bold text-green-600">
+                      {Math.floor(totalLeisureTime / 3600)}h {Math.floor((totalLeisureTime % 3600) / 60)}m
+                    </p>
+                  </Card>
+                </div>
+                <SessionHistory entries={timeRecords || []} />
+              </TabsContent>
+            </Tabs>
+          ) : (
+            <div className="text-center py-12">
+              <p className="text-gray-600 mb-4">
+                Selecione um perfil para começar a usar o timer
               </p>
             </div>
-            
-            <Timer
-              title="Leisure Timer"
-              time={leisureTime}
-              isRunning={isLeisureRunning}
-              variant="leisure"
-              onStart={handleLeisureStart}
-              onPause={handleLeisurePause}
-              onStop={handleLeisureStop}
-              disabled={isWorkRunning || leisureTime === 0}
-            />
-          </TabsContent>
-          
-          <TabsContent value="history">
-            <SessionHistory entries={timeRecords || []} />
-          </TabsContent>
-        </Tabs>
+          )}
+        </Card>
       </div>
     </div>
   );
