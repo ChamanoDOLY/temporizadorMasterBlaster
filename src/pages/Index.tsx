@@ -123,7 +123,7 @@ const Index = () => {
         <Card className="p-6 shadow-lg">
           <div className="flex justify-between items-center mb-6">
             <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-blue-600">
-              Work & Leisure Balance
+              Equilíbrio Trabalho & Lazer
             </h1>
             <div className="flex items-center gap-4">
               <ProfileSelector 
@@ -146,7 +146,7 @@ const Index = () => {
               <TabsList className="grid w-full grid-cols-4 mb-6">
                 <TabsTrigger value="timer" className="data-[state=active]:bg-purple-100">
                   <TimerIcon className="mr-2 h-4 w-4" />
-                  Timer
+                  Cronômetro
                 </TabsTrigger>
                 <TabsTrigger value="stats" className="data-[state=active]:bg-purple-100">
                   <ChartBar className="mr-2 h-4 w-4" />
@@ -192,7 +192,7 @@ const Index = () => {
           ) : (
             <div className="text-center py-12">
               <p className="text-gray-600 mb-4">
-                Selecione um perfil para começar a usar o timer
+                Selecione um perfil para começar a usar o cronômetro
               </p>
             </div>
           )}
